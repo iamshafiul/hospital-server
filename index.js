@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const MongoClient = require("mongodb").MongoClient;
+const { ObjectId } = require("bson");
 require("dotenv").config();
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6tx1s.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
@@ -25,6 +26,16 @@ client.connect((err) => {
 
   app.get("/service", (req, res) => {
     serviceCollection.find()
+    .toArray((err,items)=>{
+      res.send(items)
+    })
+  });
+
+
+  //add single service 
+  app.get("/service/:id", (req, res) => {
+    const id = ObjectId(req.params.id)
+    serviceCollection.find({_id:id})
     .toArray((err,items)=>{
       res.send(items)
     })
